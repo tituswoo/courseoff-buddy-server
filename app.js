@@ -16,9 +16,24 @@ app.get('/search/:query', function(req, res) {
 	var url = 'https://critique.gatech.edu/search.php?query=' + req.params.query;
 	request(url, function (error, response, body) {
 		if (error) throw error;
-		res.send(body);
+		var results = getSearchResults(body);
+		res.json(results);
 	});
 });
+
+function getSearchResults(raw) {
+	raw = JSON.parse(raw);
+	var results = [];
+	raw.hits.hits.map(function (hit) {
+		results.push({
+			id: hit._id,
+			professor: {
+				name: hit._source.prof
+			}
+		});
+	});
+	return results;
+}
 
 /**
  * Get course stats and profs teaching the course.
