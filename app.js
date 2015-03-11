@@ -17,6 +17,7 @@ app.get('/search/:query', function(req, res) {
 	request(url, function (error, response, body) {
 		if (error) throw error;
 		var results = getSearchResults(body);
+		res.setHeader('Content-Type', 'application/json');
 		res.json(results);
 	});
 });
@@ -30,6 +31,7 @@ app.get('/course/:id', function(req, res) {
 	request(url, function (error, response, body) {
 		if (error) throw error;
 		var courseInfo = getCourse(body);
+		res.setHeader('Content-Type', 'application/json');
 		res.json(courseInfo);
 	});
 });
@@ -43,6 +45,7 @@ app.get('/prof/:id', function(req, res) {
 	request(url, function (error, response, body) {
 		if (error) throw error;
 		var profInfo = getProfInfo(body, req.params.id);
+		res.setHeader('Content-Type', 'application/json');
 		res.json(profInfo);
 	});
 });
@@ -87,7 +90,7 @@ function getProfInfo(html, profID) {
 	return professor;
 }
 
-function getSearchResults(json) {
+function getSearchResults(html) {
 	json = JSON.parse(html);
 	var results = [];
 	json.hits.hits.map(function (hit) {
