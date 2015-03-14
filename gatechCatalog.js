@@ -2,7 +2,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Promise = require('promise');
 
-var requestURL = 'http://catalog.gatech.edu/courses/php/parse.php';
+var baseURL = 'http://catalog.gatech.edu/courses/php/parse.php';
 
 module.exports = {
 	/**
@@ -26,7 +26,7 @@ module.exports = {
 			};
 
 			request.post({
-				url: requestURL,
+				url: baseURL,
 				form: query
 			}, function(error, response, body) {
 				if (error) reject(error);

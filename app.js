@@ -64,13 +64,13 @@ app.get('/prof/:id', function(req, res) {
 	res.type('text/javascript');
 	courseCritique.getProfessorInfo(req.params.id)
 		.averageMarks().then(function(averages) {
-			console.log(averages);
 			res.setHeader('Content-Type', 'application/json');
 			res.json(averages);
+		}).catch(function(e) {
+			console.log(e);
 		});
 });
 
-
 var httpServer = http.createServer(app);
 httpServer.listen(3000);
-console.log('server started...');
+console.log('Server started...');
