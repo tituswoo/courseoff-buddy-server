@@ -17,9 +17,7 @@ gatechCatalog.getCourseDescription(
 	.then(function(data) {
 		// console.log(data);
 	})
-	.catch(function (error) {
-		console.log(error);
-	});
+	.catch(logErrors);
 
 app.get('/', function(req, res) {
 	res.type('text/plain');
@@ -38,18 +36,12 @@ app.get('/search/:query', function(req, res) {
 	var searchResults = courseCritique.search(req.params.query);
 
 	if (mode === 'all') {
-		searchResults.all().then(returnIt)
-			.catch(function(e) {
-				console.log(e);
-			});
+		searchResults.all().then(returnJSON).catch(logErrors);
 	} else if (mode === 'first' || mode === undefined) {
-		searchResults.first().then(returnIt)
-			.catch(function(e) {
-				console.log(e);
-			});
+		searchResults.first().then(returnJSON).catch(logErrors);
 	}
 
-	function returnIt(result) {
+	function returnJSON(result) {
 		res.setHeader('Content-Type', 'application/json');
 		res.json(result);
 	}
@@ -64,18 +56,12 @@ app.get('/course/:id', function(req, res) {
 	var courseInfo = courseCritique.getCourseInfo(req.params.id);
 
 	if (mode === 'all') {
-		courseInfo.all().then(returnIt)
-			.catch(function(e) {
-				console.log(e);
-			});
+		courseInfo.all().then(returnJSON).catch(logErrors);
 	} else if (mode === 'averageMarks' || mode === undefined) {
-		courseInfo.averageMarks().then(returnIt)
-			.catch(function(e) {
-				console.log(e);
-			});
+		courseInfo.averageMarks().then(returnJSON).catch(logErrors);
 	}
 
-	function returnIt(result) {
+	function returnJSON(result) {
 		res.setHeader('Content-Type', 'application/json');
 		res.json(result);
 	}
@@ -92,16 +78,20 @@ app.get('/prof/:id', function(req, res) {
 	var mode = req.query.mode;
 
 	if (mode === 'averageMarks' || mode === undefined) {
-		profData.averageMarks().then(returnIt);
+		profData.averageMarks().then(returnJSON).catch(logErrors);
 	} else if (mode === 'all') {
-		profData.all().then(returnIt);
+		profData.all().then(returnJSON).catch(logErrors);
 	}
 
-	function returnIt(result) {
+	function returnJSON(result) {
 		res.setHeader('Content-Type', 'application/json');
 		res.json(result);
 	}
 });
+
+function logErrors(e) {
+	console.log(e);
+}
 
 var httpServer = http.createServer(app);
 httpServer.listen(3000);
