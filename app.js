@@ -59,16 +59,24 @@ app.get('/course/:id', function(req, res) {
 
 /**
  * Get professor stats and courses taught by him/her.
+ * Supports getting full data (prof + courses), or just
+ * the prof's average marks overall.
  */
 app.get('/prof/:id', function(req, res) {
 	res.type('text/javascript');
-	courseCritique.getProfessorInfo(req.params.id)
-		.averageMarks().then(function(averages) {
-			res.setHeader('Content-Type', 'application/json');
-			res.json(averages);
-		}).catch(function(e) {
-			console.log(e);
-		});
+	var profData = courseCritique.getProfessorInfo(req.params.id);
+	var mode = req.query.mode;
+
+	if (mode === 'averageMarks' || mode === undefined) {
+		profData.averageMarks().then(returnIt);
+	} else if (mode === 'all') {
+		profData.all().then(returnIt);
+	}
+
+	function returnIt(result) {
+		res.setHeader('Content-Type', 'application/json');
+		res.json(result);
+	}
 });
 
 var httpServer = http.createServer(app);
