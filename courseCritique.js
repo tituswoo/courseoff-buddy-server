@@ -8,13 +8,34 @@ module.exports = {
 	search: function(query) {
 		var url = baseURL + 'search.php?query=' + query;
 
-		return new Promise(function (resolve, reject) {
+		var promise = new Promise(function (resolve, reject) {
 			request(url, function (error, response, body) {
 				if (error) reject(error);
 				var results = getSearchResults(body);
 				resolve(results);
 			});
 		});
+
+		return {
+			all: function() {
+				return new Promise(function (resolve, reject) {
+					promise.then(function(results) {
+						resolve(results);
+					}).catch(function(e) {
+						reject(e);
+					});
+				});
+			},
+			first: function() {
+				return new Promise(function (resolve, reject) {
+					promise.then(function(results) {
+						resolve(results[0]);
+					}).catch(function(e) {
+						reject(e);
+					});
+				});
+			}
+		}
 	},
 	getCourseInfo: function(courseID) {
 		var url = baseURL + 'course.php?id=' + courseID;

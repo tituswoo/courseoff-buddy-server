@@ -28,18 +28,31 @@ app.get('/', function(req, res) {
 
 /**
  * Search for a class or professor.
+ * By default, returns the top match. Setting the mode to 'all'
+ * will return all the search results.
  */
 app.get('/search/:query', function(req, res) {
 	res.type('text/javascript');
-	courseCritique.search(req.params.query)
-		.then(function(results) {
-			console.log(results);
-			res.setHeader('Content-Type', 'application/json');
-			res.json(results);
-		})
-		.catch(function(error) {
-			console.log(error);
-		});
+
+	var mode = req.query.mode;
+	var searchResults = courseCritique.search(req.params.query);
+
+	if (mode === 'all') {
+		searchResults.all().then(returnIt)
+			.catch(function(e) {
+				console.log(e);
+			});
+	} else if (mode === 'first' || mode === undefined) {
+		searchResults.first().then(returnIt)
+			.catch(function(e) {
+				console.log(e);
+			});
+	}
+
+	function returnIt(result) {
+		res.setHeader('Content-Type', 'application/json');
+		res.json(result);
+	}
 });
 
 /**
