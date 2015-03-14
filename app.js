@@ -60,14 +60,25 @@ app.get('/search/:query', function(req, res) {
  */
 app.get('/course/:id', function(req, res) {
 	res.type('text/javascript');
-	courseCritique.getCourseInfo(req.params.id)
-		.then(function(courseInfo) {
-			res.setHeader('Content-Type', 'application/json');
-			res.json(courseInfo);
-		})
-		.catch(function(error) {
-			console.log(error);
-		});
+	var mode = req.query.mode;
+	var courseInfo = courseCritique.getCourseInfo(req.params.id);
+
+	if (mode === 'all') {
+		courseInfo.all().then(returnIt)
+			.catch(function(e) {
+				console.log(e);
+			});
+	} else if (mode === 'averageMarks' || mode === undefined) {
+		courseInfo.averageMarks().then(returnIt)
+			.catch(function(e) {
+				console.log(e);
+			});
+	}
+
+	function returnIt(result) {
+		res.setHeader('Content-Type', 'application/json');
+		res.json(result);
+	}
 });
 
 /**

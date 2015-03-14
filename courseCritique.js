@@ -40,13 +40,35 @@ module.exports = {
 	getCourseInfo: function(courseID) {
 		var url = baseURL + 'course.php?id=' + courseID;
 
-		return new Promise(function (resolve, reject) {
+		var promise = new Promise(function (resolve, reject) {
 			request(url, function (error, response, body) {
 				if (error) reject(error);
 				var courseInfo = getCourse(body);
 				resolve(courseInfo);
 			});
 		});
+
+		return {
+			all: function () {
+				return new Promise(function (resolve, reject) {
+					promise.then(function(result) {
+						resolve(result);
+					}).catch(function(e) {
+						reject(e);
+					});
+				});
+			},
+			averageMarks: function () {
+				return new Promise(function (resolve, reject) {
+					promise.then(function(result) {
+						delete result.professors;
+						resolve(result);
+					}).catch(function(e) {
+						reject(e);
+					});
+				});
+			}
+		};
 	},
 	getProfessorInfo: function(profID) {
 		var url = baseURL + 'prof.php?id=' + profID;
