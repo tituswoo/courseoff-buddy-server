@@ -8,16 +8,16 @@ var app = express();
 var gatechCatalog = require('./gatechCatalog');
 var courseCritique = require('./courseCritique');
 
-gatechCatalog.getCourseDescription(
-	{
-		name: 'cs 4400',
-		semester: 'fall',
-		year: '2015'
-	})
-	.then(function(data) {
-		// console.log(data);
-	})
-	.catch(logErrors);
+// gatechCatalog.getCourseDescription(
+// 	{
+// 		name: 'cs 4400',
+// 		semester: 'fall',
+// 		year: '2015'
+// 	})
+// 	.then(function(data) {
+// 		// console.log(data);
+// 	})
+// 	.catch(logErrors);
 
 app.get('/', function(req, res) {
 	res.type('text/plain');
@@ -35,15 +35,12 @@ app.get('/search/:query', function(req, res) {
 	var mode = req.query.mode;
 	var searchResults = courseCritique.search(req.params.query);
 
-	if (mode === 'all') {
-		searchResults.all().then(returnJSON).catch(logErrors);
-	} else if (mode === 'first' || mode === undefined) {
-		searchResults.first().then(returnJSON).catch(logErrors);
-	}
+	var helper = new ApiHelper(res);
 
-	function returnJSON(result) {
-		res.setHeader('Content-Type', 'application/json');
-		res.json(result);
+	if (mode === 'all') {
+		searchResults.all().then(helper.returnJSON).catch(helper.logErrors);
+	} else if (mode === 'first' || mode === undefined) {
+		searchResults.first().then(helper.returnJSON).catch(helper.logErrors);
 	}
 });
 
@@ -55,15 +52,12 @@ app.get('/course/:id', function(req, res) {
 	var mode = req.query.mode;
 	var courseInfo = courseCritique.getCourseInfo(req.params.id);
 
-	if (mode === 'all') {
-		courseInfo.all().then(returnJSON).catch(logErrors);
-	} else if (mode === 'averageMarks' || mode === undefined) {
-		courseInfo.averageMarks().then(returnJSON).catch(logErrors);
-	}
+	var helper = new ApiHelper(res);
 
-	function returnJSON(result) {
-		res.setHeader('Content-Type', 'application/json');
-		res.json(result);
+	if (mode === 'all') {
+		courseInfo.all().then(helper.returnJSON).catch(helper.logErrors);
+	} else if (mode === 'averageMarks' || mode === undefined) {
+		courseInfo.averageMarks().then(helper.returnJSON).catch(helper.logErrors);
 	}
 });
 
@@ -77,20 +71,25 @@ app.get('/prof/:id', function(req, res) {
 	var profData = courseCritique.getProfessorInfo(req.params.id);
 	var mode = req.query.mode;
 
-	if (mode === 'averageMarks' || mode === undefined) {
-		profData.averageMarks().then(returnJSON).catch(logErrors);
-	} else if (mode === 'all') {
-		profData.all().then(returnJSON).catch(logErrors);
-	}
+	var helper = new ApiHelper(res);
 
-	function returnJSON(result) {
-		res.setHeader('Content-Type', 'application/json');
-		res.json(result);
+	if (mode === 'averageMarks' || mode === undefined) {
+		profData.averageMarks().then(helper.returnJSON).catch(helper.logErrors);
+	} else if (mode === 'all') {
+		profData.all().then(helper.returnJSON).catch(helper.logErrors);
 	}
 });
 
-function logErrors(e) {
-	console.log(e);
+function ApiHelper(response) {
+	var methods = {};
+	methods.returnJSON = function(result) {
+		response.setHeader('Content-Type', 'application/json');
+		response.json(result);
+	};
+	methods.logErrors = function(e) {
+		console.log(e);
+	}
+	return methods;
 }
 
 var httpServer = http.createServer(app);
