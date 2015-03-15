@@ -19,6 +19,9 @@ var courseCritique = require('./courseCritique');
 // 	})
 // 	.catch(logErrors);
 
+/**
+ * Returns a simple welcome page (root of the API).
+ */
 app.get('/', function(req, res) {
 	res.type('text/plain');
 	res.send('The unofficial gatech course data api.');
@@ -80,6 +83,10 @@ app.get('/prof/:id', function(req, res) {
 	}
 });
 
+/**
+ * API Helper class for returning json and logging any errors.
+ * @param {object} response the Express response object.
+ */
 function ApiHelper(response) {
 	var methods = {};
 	methods.returnJSON = function(result) {
@@ -92,6 +99,7 @@ function ApiHelper(response) {
 	return methods;
 }
 
+// Start the server"
 var httpServer = http.createServer(app);
 httpServer.listen(3000);
 console.log('Server started...');

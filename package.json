@@ -14,6 +14,8 @@
     "request": "^2.53.0"
   },
   "dependencies": {
-    "promise": "^6.1.0"
+    "mocha": "^2.2.1",
+    "promise": "^6.1.0",
+    "should": "^5.2.0"
   }
 }
