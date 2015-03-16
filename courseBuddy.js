@@ -1,7 +1,7 @@
 var Promise = require('promise');
 var courseCritique = require('./courseCritique');
 var gatechCatalog = require('./gatechCatalog');
-var gatechDirectory require('./gatechDirectory');
+var gatechDirectory = require('./gatechDirectory');
 var rateMyProfessors = require('./rateMyProfessors');
 
 module.exports = new CourseBuddy();
@@ -76,14 +76,44 @@ CourseBuddy.prototype.course = function (id, options) {
 CourseBuddy.prototype.prof = function (id, options) {
 	if (id === '') return Promise.reject('ID cannot be left blank.');
 
+	var professor = {};
+
 	return new Promise(function (resolve, reject) {
-		var profInfoPromise = courseCritique.getProfessorInfo(id);
-		profInfoPromise.all().then(function (info) {
-			if (!options.averageMarks) delete info.averageMarks;
+		courseCritique.getProfessorInfo(id).all()
+		.then(function(info){
 			if (!options.courses) delete info.courses;
-			resolve(info);
-		}).catch(function (e) {
-			reject(e);
+			if (!options.averageMarks) delete info.averageMarks;
+			// add information to professor object
+			addObjProps(info).to(professor);
+			return info;
+		}).then(function (info) {
+			return gatechDirectory.search(info.name);
+		}).then(function (results) {
+			var url = results[0].url;
+			return gatechDirectory.person(url);
+		}).then(function (profInfo) {
+			// add information to professor object
+			professor.email = profInfo.email;
+			professor.url = profInfo.url;
+		}).then(function () {
+			return rateMyProfessors.professor(professor.name);
+		}).then(function (info) {
+			// add rate my professors information to the professor object
+			professor.rateMyProfessors = info;
+		}).done(function () {
+			resolve(professor);
 		});
 	});
 };
+
+function addObjProps(from) {
+	function to(to) {
+		for(var prop in from) {
+			to[prop] = from[prop];
+		}
+	}
+
+	return {
+		to: to
+	};
+}
