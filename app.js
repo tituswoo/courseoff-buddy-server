@@ -66,8 +66,6 @@ app.get('/course/:id', function(req, res) {
  */
 app.get('/prof/:id', function(req, res) {
 	res.type('text/javascript');
-	// var profData = courseCritique.getProfessorInfo(req.params.id);
-	// var mode = req.query.mode;
 
 	var profID = req.params.id;
 	var options = {

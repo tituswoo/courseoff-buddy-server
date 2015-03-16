@@ -8,7 +8,7 @@ function CourseBuddy() {};
 /**
  * Search for a class or professor.
  * @param  {string} query The string query to search for.
- * @return {[type]}       [description]
+ * @return {object} An array of search objects.
  */
 CourseBuddy.prototype.search = function (query, limit) {
 	if (query === '') return Promise.reject('Query cannot be left blank.');
@@ -36,7 +36,7 @@ CourseBuddy.prototype.search = function (query, limit) {
  * @param {object}	options.averageMarks - return the average marks for the course or not.
  * @param {boolean} options.professors - return info of professors teaching the course.
  * @param {boolean}	options.details - return course details or not.
- * @return {object}    A course object that contains course-related info.
+ * @return {object} A course object that contains course-related info.
  */
 CourseBuddy.prototype.course = function (id, options) {
 	if (id === '') return Promise.reject('ID cannot be left blank.');
@@ -69,7 +69,7 @@ CourseBuddy.prototype.course = function (id, options) {
  * @param {object} options Specifies what information to return.
  * @param {string} options.averageMarks - include average marks or not.
  * @param {string} options.courses - include courses or not.
- * @return {object}         A professor object that contains professor-related info.
+ * @return {object}        A professor object that contains professor-related info.
  */
 CourseBuddy.prototype.prof = function (id, options) {
 	if (id === '') return Promise.reject('ID cannot be left blank.');
