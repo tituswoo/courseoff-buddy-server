@@ -1,5 +1,4 @@
 var should = require('should');
-
 var courseCritique = require('../courseCritique');
 
 describe('Course Critique API', function() {

@@ -15,17 +15,15 @@ describe('Gatech Catalog API', function() {
 				done(verdict);
 			});
 		});
-
 		it('should return description for the course matching provided criteria', function(done) {
 			gatechCatalog.getCourseDescription(course)
 				.then(function(description) {
 					should(description).have.properties(['name', 'link', 'description']);
-					should(description.name).equal('CS 4400 Intr to Database Systems ');
+					should(description.name).equal('CS 4400 Intr to Database Systems');
 				})
 				.done(function (verdict) {
 					done(verdict);
 				});
 		});
-		
 	});
 });

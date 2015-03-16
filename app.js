@@ -8,17 +8,6 @@ var app = express();
 var gatechCatalog = require('./gatechCatalog');
 var courseCritique = require('./courseCritique');
 
-// gatechCatalog.getCourseDescription(
-// 	{
-// 		name: 'cs 4400',
-// 		semester: 'fall',
-// 		year: '2015'
-// 	})
-// 	.then(function(data) {
-// 		// console.log(data);
-// 	})
-// 	.catch(logErrors);
-
 /**
  * Returns a simple welcome page (root of the API).
  */
