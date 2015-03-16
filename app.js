@@ -42,7 +42,7 @@ app.get('/course/:id', function(req, res) {
 	var options = {
 		professors: req.query.professors || false,
 		averageMarks: req.query.averageMarks || true,
-		details: req.query.details || false
+		details: req.query.details || true
 	};
 	var helper = ApiHelper(res);
 
@@ -62,7 +62,8 @@ app.get('/prof/:id', function(req, res) {
 	var profID = req.params.id;
 	var options = {
 		averageMarks: req.query.averageMarks || true,
-		courses: req.query.courses || false
+		courses: req.query.courses || false,
+		rmp: req.query.rmp || true
 	}
 
 	var helper = new ApiHelper(res);

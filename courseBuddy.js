@@ -43,24 +43,24 @@ CourseBuddy.prototype.search = function (query, limit) {
 CourseBuddy.prototype.course = function (id, options) {
 	if (id === '') return Promise.reject('ID cannot be left blank.');
 
+	var course = {};
+
 	return new Promise(function (resolve, reject) {
-		var courseInfoPromise = courseCritique.getCourseInfo(id);
-		courseInfoPromise.all().then(function (course) {
-			course.id = id;
-			if (!options.professors) delete course.professors;
-			if (!options.averageMarks) delete course.averageMarks;
-			if (options.details) {
-				var firstDigit = id.search(/\d/);
-				var courseName = id.substr(0, firstDigit) + ' ' + id.substr(firstDigit, id.length);
-				gatechCatalog.getCourseDescription({name: courseName}).then(function (desc) {
-					course.details = desc;
-					resolve(course);
-				});
-			} else {
-				resolve(course);
-			}
-		}).catch(function (e) {
-			reject(e);
+
+		courseCritique.getCourseInfo(id).all()
+		.then(function (courseInfo) {
+			if (!options.professors) delete courseInfo.professors;
+			if (!options.averageMarks) delete courseInfo.averageMarks;
+			addObjProps(courseInfo).to(course);
+			return courseInfo;
+		}).then(function (courseInfo) {
+			var firstDigit = id.search(/\d/);
+			var courseName = id.substr(0, firstDigit) + ' ' + id.substr(firstDigit, id.length);			
+			return gatechCatalog.getCourseDescription({name: courseName});
+		}).then(function (details) {
+			course.details = details;
+		}).then(function () {
+			resolve(course);
 		});
 	});
 };
