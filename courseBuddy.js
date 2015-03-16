@@ -1,6 +1,8 @@
 var Promise = require('promise');
 var courseCritique = require('./courseCritique');
 var gatechCatalog = require('./gatechCatalog');
+var gatechDirectory require('./gatechDirectory');
+var rateMyProfessors = require('./rateMyProfessors');
 
 module.exports = new CourseBuddy();
 function CourseBuddy() {};

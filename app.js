@@ -6,18 +6,6 @@ var Promise = require('promise');
 
 var app = express();
 var courseBuddy = require('./courseBuddy');
-var gatechDirectory = require('./gatechDirectory');
-var rateMyProfessors = require('./rateMyProfessors');
-
-gatechDirectory.search('Simpkins, Christopher L').then(function (results) {
-	gatechDirectory.person(results[0].url).then(function (info) {
-		rateMyProfessors.professor(info.name).then(function (info) {
-			console.log(info);
-		});
-	});
-}).catch(function (e) {
-	console.log(e);
-});
 
 /**
  * Returns a simple welcome page (root of the API).
