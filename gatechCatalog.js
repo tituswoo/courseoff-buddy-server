@@ -91,7 +91,7 @@ function extractCourses(html) {
 		courses.push({
 			name: name.substr(0, name.length - 1),
 			link: $('a', $(this)).attr('href'),
-			description: rawDescription.substring(0, rawDescription.indexOf('<br>'))
+			description: rawDescription.substring(0, rawDescription.indexOf('   '))
 		});
 	});
 	
