@@ -66,16 +66,20 @@ app.get('/course/:id', function(req, res) {
  */
 app.get('/prof/:id', function(req, res) {
 	res.type('text/javascript');
-	var profData = courseCritique.getProfessorInfo(req.params.id);
-	var mode = req.query.mode;
+	// var profData = courseCritique.getProfessorInfo(req.params.id);
+	// var mode = req.query.mode;
+
+	var profID = req.params.id;
+	var options = {
+		averageMarks: req.query.averageMarks || true,
+		courses: req.query.courses || false
+	}
 
 	var helper = new ApiHelper(res);
 
-	if (mode === 'averageMarks' || mode === undefined) {
-		profData.averageMarks().then(helper.returnJSON).catch(helper.logErrors);
-	} else if (mode === 'all') {
-		profData.all().then(helper.returnJSON).catch(helper.logErrors);
-	}
+	courseBuddy.prof(profID, options)
+		.then(helper.returnJSON)
+		.catch(helper.logErrors);
 });
 
 /**
