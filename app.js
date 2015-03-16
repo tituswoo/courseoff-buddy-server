@@ -9,11 +9,11 @@ var gatechCatalog = require('./gatechCatalog');
 var courseCritique = require('./courseCritique');
 var courseBuddy = require('./courseBuddy');
 
-courseBuddy.search('CS 4400', 1).then(function (results) {
-	console.log(results);
-}).catch(function (e) {
-	console.log(e);
-});
+// courseBuddy.search('cs 4400', 1).then(function (results) {
+// 	console.log(results);
+// }).catch(function (e) {
+// 	console.log(e);
+// });
 
 /**
  * Returns a simple welcome page (root of the API).
@@ -45,16 +45,18 @@ app.get('/search/:query', function(req, res) {
  */
 app.get('/course/:id', function(req, res) {
 	res.type('text/javascript');
-	var mode = req.query.mode;
-	var courseInfo = courseCritique.getCourseInfo(req.params.id);
 
-	var helper = new ApiHelper(res);
+	var courseID = req.params.id;
+	var options = {
+		professors: req.query.professors || false,
+		averageMarks: req.query.averageMarks || true,
+		details: req.query.details || false
+	};
+	var helper = ApiHelper(res);
 
-	if (mode === 'all') {
-		courseInfo.all().then(helper.returnJSON).catch(helper.logErrors);
-	} else if (mode === 'averageMarks' || mode === undefined) {
-		courseInfo.averageMarks().then(helper.returnJSON).catch(helper.logErrors);
-	}
+	courseBuddy.course(courseID, options)
+		.then(helper.returnJSON)
+		.catch(helper.logErrors);
 });
 
 /**
