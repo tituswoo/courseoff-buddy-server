@@ -5,15 +5,17 @@ var http = require('http');
 var Promise = require('promise');
 
 var app = express();
-var gatechCatalog = require('./gatechCatalog');
-var courseCritique = require('./courseCritique');
 var courseBuddy = require('./courseBuddy');
+var gatechDirectory = require('./gatechDirectory');
 
-// courseBuddy.search('cs 4400', 1).then(function (results) {
-// 	console.log(results);
-// }).catch(function (e) {
-// 	console.log(e);
-// });
+gatechDirectory.search('Leahy, William').then(function (results) {
+	console.log(results);
+	gatechDirectory.person(results[0].url).then(function (info) {
+		console.log(info);
+	});
+}).catch(function (e) {
+	console.log(e);
+});
 
 /**
  * Returns a simple welcome page (root of the API).
