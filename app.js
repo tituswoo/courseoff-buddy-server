@@ -7,11 +7,13 @@ var Promise = require('promise');
 var app = express();
 var courseBuddy = require('./courseBuddy');
 var gatechDirectory = require('./gatechDirectory');
+var rateMyProfessors = require('./rateMyProfessors');
 
-gatechDirectory.search('Leahy, William').then(function (results) {
-	console.log(results);
+gatechDirectory.search('Simpkins, Christopher L').then(function (results) {
 	gatechDirectory.person(results[0].url).then(function (info) {
-		console.log(info);
+		rateMyProfessors.professor(info.name).then(function (info) {
+			console.log(info);
+		});
 	});
 }).catch(function (e) {
 	console.log(e);
