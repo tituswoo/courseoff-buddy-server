@@ -23,13 +23,15 @@ app.get('/', function(req, res) {
 app.get('/search/:query', function(req, res) {
 	res.type('text/javascript');
 
-	var limit = req.query.limit;
+	var limit = req.query.limit || 3;
 	var query = req.params.query;
 	var helper = ApiHelper(res);
 
 	courseBuddy.search(query, limit)
 		.then(helper.returnJSON)
-		.catch(helper.logErrors);
+		.catch(function (e) {
+			res.status(404).send(e);
+		});
 });
 
 /**

@@ -17,11 +17,46 @@ CourseBuddy.prototype.search = function (query, limit) {
 
 	return new Promise(function (resolve, reject) {
 		var searchPromise = courseCritique.search(query);
-		limit = limit || -1;
+		limit = limit || 3;
 
 		searchPromise.all().then(function(results) {
 			if (limit > -1) {
-				resolve(results.slice(0, limit));
+				console.log('searching for: ' + query);
+
+				var courseNumber = query.match(/(\d.*\d)|\d/);
+
+				if (courseNumber != null) {
+					console.log('Searching for a course');
+					courseNumber = courseNumber[0];
+
+					var found = false;
+					results.map(function (r) {
+						if (r.id.indexOf(courseNumber) > -1) {
+							found = true;
+						}
+					});
+					if (found) {
+						resolve(results.slice(0, limit));
+					} else {
+						reject('No course matches the the criteria: ' + query);
+					}
+				} else {
+					console.log('Searching for a professor');
+
+					var found = false;
+					var firstName = query.match(/[^\s|,]+/);
+					results.map(function (r) {
+						var name = r.professor.name.toLowerCase();
+						if (name.indexOf(firstName) > -1) {
+							found = true;
+						}
+					});
+					if (found) {
+						resolve(results.slice(0, limit));
+					} else {
+						reject('No professor was found with the query: ' + query);
+					}					
+				}
 			} else {
 				resolve(results);
 			}
@@ -46,7 +81,6 @@ CourseBuddy.prototype.course = function (id, options) {
 	var course = {};
 
 	return new Promise(function (resolve, reject) {
-
 		courseCritique.getCourseInfo(id).all()
 		.then(function (courseInfo) {
 			if (!options.professors) delete courseInfo.professors;
