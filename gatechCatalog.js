@@ -29,8 +29,13 @@ module.exports = {
 
 			request.post({
 				url: baseURL,
-				form: query
+				form: query,
+				timeout: 3000
 			}, function(error, response, body) {
+				// @todo: apparently the gatech catalog goes down. and it stops
+				// any course info from showing. Program in a contingency
+				// so that pertinent info will still be returned even if
+				// all other parts don't.
 				if (error) reject(error);
 				try {
 					var course = extractCourses(body).first();

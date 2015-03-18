@@ -95,6 +95,7 @@ CourseBuddy.prototype.course = function (id, options) {
 			return gatechCatalog.getCourseDescription({name: courseName});
 		}).then(function (details) {
 			course.details = details;
+			return course;
 		}).then(function () {
 			resolve(course);
 		});
