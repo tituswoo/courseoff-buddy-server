@@ -92,12 +92,13 @@ CourseBuddy.prototype.course = function (id, options) {
 		}).then(function (courseInfo) {
 			var firstDigit = id.search(/\d/);
 			var courseName = id.substr(0, firstDigit) + ' ' + id.substr(firstDigit, id.length);			
-			return gatechCatalog.getCourseDescription({name: courseName});
-		}).then(function (details) {
-			course.details = details;
-			return course;
-		}).then(function () {
-			resolve(course);
+			gatechCatalog.getCourseDescription({name: courseName}).then(function (details) {
+				course.details = details;
+			}).catch(function (e) {
+				course.details = e;
+			}).done(function () {
+				resolve(course);
+			});
 		});
 	});
 };

@@ -32,7 +32,7 @@ module.exports = {
 				form: query,
 				timeout: 3000
 			}, function(error, response, body) {
-				// @todo: apparently the gatech catalog goes down. and it stops
+				// @todo: apparently the gatech catalog goes down a lot. and it stops
 				// any course info from showing. Program in a contingency
 				// so that pertinent info will still be returned even if
 				// all other parts don't.
@@ -105,7 +105,7 @@ function extractCourses(html) {
 			if (courses.length > 0) {
 				return courses[0];
 			} else {
-				throw 'No course(s) found that match the given criteria.';
+				throw 'No course(s) found matching your criteria, or the server is not available.';
 			}			
 		},
 		all: function() {
