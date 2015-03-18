@@ -29,9 +29,11 @@ CourseBuddy.prototype.search = function (query, limit) {
 					console.log('Searching for a course');
 					courseNumber = courseNumber[0];
 
+					var id = query.match(/[a-zA-z]+/)[0].toUpperCase() + courseNumber;
+
 					var found = false;
 					results.map(function (r) {
-						if (r.id.indexOf(courseNumber) > -1) {
+						if (r.id === id) {
 							found = true;
 						}
 					});
