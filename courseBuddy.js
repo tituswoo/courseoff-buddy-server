@@ -13,7 +13,7 @@ function CourseBuddy() {};
  * @return {object} An array of search objects.
  */
 CourseBuddy.prototype.search = function (query, limit) {
-	if (query === '') return Promise.reject('Query cannot be left blank.');
+	if (!isValid(query)) return Promise.reject('Query cannot be left blank.');
 
 	return new Promise(function (resolve, reject) {
 		var searchPromise = courseCritique.search(query);
@@ -47,7 +47,6 @@ CourseBuddy.prototype.search = function (query, limit) {
 
 					var found = false;
 					var firstName = query.match(/[^\s|,]+/)[0].toLowerCase();
-					console.log(firstName);
 					results.map(function (r) {
 						var name = r.professor.name.toLowerCase();
 						if (name.indexOf(firstName) > -1) {
@@ -79,7 +78,7 @@ CourseBuddy.prototype.search = function (query, limit) {
  * @return {object} A course object that contains course-related info.
  */
 CourseBuddy.prototype.course = function (id, options) {
-	if (id === '') return Promise.reject('ID cannot be left blank.');
+	if (!isValid(id)) return Promise.reject('ID cannot be left blank.');
 
 	var course = {};
 
@@ -97,6 +96,7 @@ CourseBuddy.prototype.course = function (id, options) {
 				course.details = details;
 			}).catch(function (e) {
 				course.details = e;
+				// todo: if I put reject(e) here, it doesn't return anything.
 			}).done(function () {
 				resolve(course);
 			});
@@ -113,7 +113,7 @@ CourseBuddy.prototype.course = function (id, options) {
  * @return {object}        A professor object that contains professor-related info.
  */
 CourseBuddy.prototype.prof = function (id, options) {
-	if (id === '') return Promise.reject('ID cannot be left blank.');
+	if (!isValid(id)) return Promise.reject('ID cannot be left blank.');
 
 	var professor = {};
 
@@ -155,4 +155,9 @@ function addObjProps(from) {
 	return {
 		to: to
 	};
+}
+
+function isValid(id) {
+	if (!id || id === 'undefined' || id === '') return false;
+	return true;
 }

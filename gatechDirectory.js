@@ -15,7 +15,7 @@ var baseURL = 'http://www.rcr.gatech.edu/directory/results/';
  * @param  {string} name - The name of the person to look for.
  */
 GatechDirectory.prototype.search = function (name) {
-	if (name === '') return new Promise.reject('Name cannot be left blank.');
+	if (name === '') return Promise.reject('Name cannot be left blank.');
 	var url = baseURL + formatName(name);
 
 	return new Promise(function (resolve, reject) {
@@ -38,11 +38,11 @@ GatechDirectory.prototype.search = function (name) {
  * @return {object}     A user object that contains the person's nae, email, and url.
  */
 GatechDirectory.prototype.person = function (url) {
-	if (url === '') return new Promise.reject('The URL cannot be left blank.');
+	if (url === '') return Promise.reject('The URL cannot be left blank.');
 
 	return new Promise(function (resolve, reject) {
 		request(url, function (error, response, body) {
-			if (error) return new Promise.reject(error);
+			if (error) return Promise.reject(error);
 
 			var info = extractPerson(body);
 			info.url = url;

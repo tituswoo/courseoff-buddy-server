@@ -29,9 +29,7 @@ app.get('/search/:query', function(req, res) {
 
 	courseBuddy.search(query, limit)
 		.then(helper.returnJSON)
-		.catch(function (e) {
-			res.status(404).send(e);
-		});
+		.catch(helper.logErrors);
 });
 
 /**
@@ -87,6 +85,7 @@ function ApiHelper(response) {
 	};
 	methods.logErrors = function(e) {
 		console.log(e);
+		response.status(404).send(e);
 	}
 	return methods;
 }

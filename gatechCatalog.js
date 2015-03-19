@@ -105,7 +105,7 @@ function extractCourses(html) {
 			if (courses.length > 0) {
 				return courses[0];
 			} else {
-				throw 'No course(s) found matching your criteria, or the server is not available.';
+				throw 'No course(s) found matching your criteria, or the server is not available (gatech catalog is probably offline again).';
 			}			
 		},
 		all: function() {
