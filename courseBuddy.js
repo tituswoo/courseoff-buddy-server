@@ -46,7 +46,8 @@ CourseBuddy.prototype.search = function (query, limit) {
 					console.log('Searching for a professor');
 
 					var found = false;
-					var firstName = query.match(/[^\s|,]+/);
+					var firstName = query.match(/[^\s|,]+/)[0].toLowerCase();
+					console.log(firstName);
 					results.map(function (r) {
 						var name = r.professor.name.toLowerCase();
 						if (name.indexOf(firstName) > -1) {
