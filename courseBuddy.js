@@ -131,7 +131,7 @@ CourseBuddy.prototype.prof = function (id, options) {
 				return info;
 			})
 			.then(function (info) {
-				console.log('2: got the info');
+				// console.log('2: got the info');
 				return gatechDirectory.search(info.name)
 					.then(function (results) {
 						// console.log('2.1: successfully got the results');
@@ -143,7 +143,7 @@ CourseBuddy.prototype.prof = function (id, options) {
 					});
 			})
 			.catch(function (e) {
-				console.log('[error1]: ' + e);
+				// console.log('[error1]: ' + e);
 				return Promise.reject(e);
 			})
 			.then(function (searchResults) {
