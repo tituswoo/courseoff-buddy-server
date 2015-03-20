@@ -15,10 +15,11 @@ var baseURL = 'http://www.rcr.gatech.edu/directory/results/';
  * @param  {string} name - The name of the person to look for.
  */
 GatechDirectory.prototype.search = function (name) {
-	if (name === '') return Promise.reject('Name cannot be left blank.');
-	var url = baseURL + formatName(name);
-
+	if (name === '') return Promise.reject('[gatechDirectory] Name cannot be left blank.');
+	
 	return new Promise(function (resolve, reject) {
+		var url = baseURL + formatName(name);
+
 		request(url, function (error, response, body) {
 			if (error) return reject(error);
 			var searchResults = extractSearchResults(body);

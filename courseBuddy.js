@@ -21,12 +21,12 @@ CourseBuddy.prototype.search = function (query, limit) {
 
 		searchPromise.all().then(function(results) {
 			if (limit > -1) {
-				console.log('searching for: ' + query);
+				// console.log('searching for: ' + query);
 
 				var courseNumber = query.match(/(\d.*\d)|\d/);
 
 				if (courseNumber != null) {
-					console.log('Searching for a course');
+					// console.log('Searching for a course');
 					courseNumber = courseNumber[0];
 
 					var id = query.match(/[a-zA-z]+/)[0].toUpperCase() + courseNumber;
@@ -43,7 +43,7 @@ CourseBuddy.prototype.search = function (query, limit) {
 						reject('No course matches the the criteria: ' + query);
 					}
 				} else {
-					console.log('Searching for a professor');
+					// console.log('Searching for a professor');
 
 					var found = false;
 					var firstName = query.match(/[^\s|,]+/)[0].toLowerCase();
@@ -98,7 +98,11 @@ CourseBuddy.prototype.course = function (id, options) {
 				course.details = e;
 				// todo: if I put reject(e) here, it doesn't return anything.
 			}).done(function () {
-				resolve(course);
+				if (courseInfo.averageMarks.gpa === '') {
+					reject(course);
+				} else {
+					resolve(course);
+				}
 			});
 		});
 	});
@@ -119,29 +123,63 @@ CourseBuddy.prototype.prof = function (id, options) {
 
 	return new Promise(function (resolve, reject) {
 		courseCritique.getProfessorInfo(id).all()
-		.then(function(info){
-			if (!options.courses) delete info.courses;
-			if (!options.averageMarks) delete info.averageMarks;
-			// add information to professor object
-			addObjProps(info).to(professor);
-			return info;
-		}).then(function (info) {
-			return gatechDirectory.search(info.name);
-		}).then(function (results) {
-			var url = results[0].url;
-			return gatechDirectory.person(url);
-		}).then(function (profInfo) {
-			// add information to professor object
-			professor.email = profInfo.email;
-			professor.url = profInfo.url;
-		}).then(function () {
-			return rateMyProfessors.professor(professor.name);
-		}).then(function (info) {
-			// add rate my professors information to the professor object
-			professor.rateMyProfessors = info;
-		}).done(function () {
-			resolve(professor);
-		});
+			.then(function (info) {
+				// console.log('1: got the info');
+				if (!options.courses) delete info.courses;
+				if (!options.averageMarks) delete info.averageMarks;
+				addObjProps(info).to(professor);
+				return info;
+			})
+			.then(function (info) {
+				console.log('2: got the info');
+				return gatechDirectory.search(info.name)
+					.then(function (results) {
+						// console.log('2.1: successfully got the results');
+						return Promise.resolve(results);
+					})
+					.catch(function (e) {
+						// console.log('2.1: failed to get the results');
+						return Promise.reject(e);
+					});
+			})
+			.catch(function (e) {
+				console.log('[error1]: ' + e);
+				return Promise.reject(e);
+			})
+			.then(function (searchResults) {
+				// console.log('3: got the search results');
+				var url = searchResults[0].url;
+				return gatechDirectory.person(url)
+					.then(function (profInfo) {
+						return Promise.resolve(profInfo);
+					})
+					.catch(function (e) {
+						return Promise.reject(e);
+					});
+			})
+			.catch(function (e) {
+				// console.log('[error2]: ' + e);
+				return Promise.reject(e);
+			})
+			.then(function (profInfo) {
+				professor.email = profInfo.email;
+				professor.url = profInfo.url;
+
+				return rateMyProfessors.professor(professor.name)
+					.then(function (ratings) {
+						return Promise.resolve(ratings);
+					})
+					.catch(function (e) {
+						return Promise.reject(e);
+					});
+			})
+			.catch(function (e) {
+				reject(e);
+			})
+			.then(function (ratings) {
+				professor.rateMyProfessors = ratings;
+				resolve(professor);
+			});
 	});
 };
 

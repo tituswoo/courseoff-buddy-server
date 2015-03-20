@@ -84,8 +84,8 @@ function ApiHelper(response) {
 		response.json(result);
 	};
 	methods.logErrors = function(e) {
-		console.log(e);
-		response.status(404).send(e);
+		// console.log(e);
+		response.status(404).send('[error] ' + e);
 	}
 	return methods;
 }
@@ -93,4 +93,4 @@ function ApiHelper(response) {
 // Start the server"
 var httpServer = http.createServer(app);
 httpServer.listen(3000);
-console.log('Server started...');
+// console.log('Server started...');
