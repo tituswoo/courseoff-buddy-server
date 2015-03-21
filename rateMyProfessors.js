@@ -19,23 +19,48 @@ RateMyProfessors.prototype.professor = function (fullname) {
 	if (fullname === '') return Promise.reject('The name cannot be left blank.');
 
 	return new Promise(function (resolve, reject) {
-	fullname = convertName(fullname);
-		var url = 'http://search.mtvnservices.com/typeahead/suggest/?solrformat=true&rows=10&callback=jQuery1110046836297819390893_1426482151287&q='+fullname+'+AND+schoolid_s%3A361&defType=edismax&qf=teacherfullname_t%5E1000+autosuggest&bf=pow(total_number_of_ratings_i%2C2.1)&sort=total_number_of_ratings_i+desc&siteName=rmp&rows=20&start=0&fl=pk_id+teacherfirstname_t+teacherlastname_t+total_number_of_ratings_i+averageratingscore_rf+schoolid_s';
+		fullname = convertName(fullname);
+		var url = 'http://www.ratemyprofessors.com/search.jsp?queryoption=HEADER&queryBy=teacherName&schoolName=Georgia+Institute+of+Technology&schoolID=361&query=' + fullname;
 
 		request(url, function (error, response, body) {
-			if (error) return eject(error);
-			var pkid = getPKID(body);
-			var newURL = 'http://www.ratemyprofessors.com/ShowRatings.jsp?tid=' + pkid;
-			request(newURL, function (err, resp, body) {
-				if (err) return eject(err);
-
-				var profRankings = extractRankings(body);
-				profRankings.url = newURL;
-				resolve(profRankings);
-			});
+			var profURL = getProfessorURL(fullname, body);
+			if (profURL) {
+				request(profURL, function (error, response, body) {
+					if (error) return reject(error);					
+					var ratings = extractRankings(body);
+					if (ratings) {
+						ratings.url = profURL;
+						return resolve(ratings);
+					} else {
+						return reject(fullname + ' has no ratings yet.');
+					}
+				});
+			} else {
+				reject('Could not find ' + fullname + ' on Rate My Professors.');
+			}
 		});
 	});
 };
+
+function getProfessorURL(fullname, html) {
+	var $ = cheerio.load(html);
+	var results = $('.listings-wrap');
+	var foundMatches = String(results.html());
+	var url = '';
+	if (foundMatches != 'null') {
+		results.find('.listings > .listing').each(function () {
+			var partialURL = $(this).find('a').attr('href');
+			var name = $(this).find('.listing-name > .main').html();
+			if (name === fullname) {
+				url = 'http://www.ratemyprofessors.com' + partialURL;
+				return;
+			}
+		});
+		return url || false;
+	} else {
+		return false;
+	}
+}
 
 function extractRankings(html) {
 	var $ = cheerio.load(html);
@@ -43,22 +68,19 @@ function extractRankings(html) {
 
 	var overallProfRatings = {};
 
-	// Grab helpfullness, clarity, and easiness ratings:
-	$('.faux-slides > .rating-slider', context).each(function() {
-		var title = $(this).find('.label').html().toLowerCase();
-		var rating = $(this).find('.rating').html();
+	var exists = String($('.faux-slides > .rating-slider', context).html());
 
-		overallProfRatings[title] = rating;
-	});
-	
-	return overallProfRatings;
-}
-
-function getPKID(result) {
-	var pkidLoc = result.indexOf('pk_id') + 7;
-	var pkid = result.substr(pkidLoc, 7);
-	
-	return pkid;
+	if (exists != 'null') {
+		// Grab helpfullness, clarity, and easiness ratings:
+		$('.faux-slides > .rating-slider', context).each(function() {
+			var title = $(this).find('.label').html().toLowerCase();
+			var rating = $(this).find('.rating').html();
+			overallProfRatings[title] = rating;
+		});		
+		return overallProfRatings;
+	} else {
+		return false;
+	}	
 }
 
 /**
@@ -69,7 +91,5 @@ function getPKID(result) {
  * @return {string} sanitized, RMP compatible name query.
  */
 function convertName(fullname) {
-	fullname = fullname.replace(' ', '+');
-	fullname = fullname.substr(0, fullname.indexOf(' '));
-	return fullname;
+	return fullname.match(/[a-zA-Z]+,\s[a-zA-Z+]+/)[0];
 }
