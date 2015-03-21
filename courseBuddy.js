@@ -16,6 +16,7 @@ CourseBuddy.prototype.search = function (query, limit) {
 	if (!isValid(query)) return Promise.reject('Query cannot be left blank.');
 
 	return new Promise(function (resolve, reject) {
+		query = query.replace(/[.]/g, '');
 		var searchPromise = courseCritique.search(query);
 		limit = limit || 3;
 
