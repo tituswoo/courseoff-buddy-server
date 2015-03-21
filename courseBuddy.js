@@ -175,7 +175,8 @@ CourseBuddy.prototype.prof = function (id, options) {
 					});
 			})
 			.catch(function (e) {
-				reject(e);
+				professor.rateMyProfessors = false;
+				resolve(professor);
 			})
 			.then(function (ratings) {
 				professor.rateMyProfessors = ratings;
