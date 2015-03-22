@@ -44,6 +44,7 @@ module.exports = {
 			request(url, function (error, response, body) {
 				if (error) reject(error);
 				var courseInfo = getCourse(body);
+				courseInfo.averageMarks.url = url;
 				resolve(courseInfo);
 			});
 		});
@@ -77,6 +78,7 @@ module.exports = {
 			request(url, function (error, response, body) {
 				if (error) reject(error);
 				var profInfo = getProfInfo(body, profID);
+				profInfo.averageMarks.url = url;
 				resolve(profInfo);
 			});
 		});
