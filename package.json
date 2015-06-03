@@ -1,7 +1,6 @@
 {
   "name": "course-critique-api",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -17,6 +16,16 @@
     "bluebird": "^2.9.14",
     "mocha": "^2.2.1",
     "promise": "^6.1.0",
+    "rethinkdb": "^2.0.0-1",
     "should": "^5.2.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://tituswoo@bitbucket.org/tituswoo/course-buddy-api.git"
+  },
+  "homepage": "https://bitbucket.org/tituswoo/course-buddy-api#readme",
+  "description": ""
 }
