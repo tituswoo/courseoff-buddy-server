@@ -2,7 +2,6 @@ var Promise = require('promise');
 var courseCritique = require('./courseCritique');
 var gatechCatalog = require('./gatechCatalog');
 var gatechDirectory = require('./gatechDirectory');
-var rateMyProfessors = require('./rateMyProfessors');
 
 module.exports = new CourseBuddy();
 function CourseBuddy() {};
@@ -165,21 +164,8 @@ CourseBuddy.prototype.prof = function (id, options) {
 			.then(function (profInfo) {
 				professor.email = profInfo.email;
 				professor.url = profInfo.url;
+				professor.ratings = false;
 
-				return rateMyProfessors.professor(professor.name)
-					.then(function (ratings) {
-						return Promise.resolve(ratings);
-					})
-					.catch(function (e) {
-						return Promise.reject(e);
-					});
-			})
-			.catch(function (e) {
-				professor.rateMyProfessors = false;
-				resolve(professor);
-			})
-			.then(function (ratings) {
-				professor.rateMyProfessors = ratings;
 				resolve(professor);
 			});
 	});
