@@ -34,7 +34,9 @@ module.exports = {
 					const $ = cheerio.load(body)
 					const courseDescription = $('.ntdefault').first().html().split('<br>')[0].replace(/\r?\n|\r/g, '')
 					console.log(courseDescription)
-					resolve(courseDescription)
+					resolve({
+						description: courseDescription
+					})
 				} catch (e) {
 					reject(e)
 				}

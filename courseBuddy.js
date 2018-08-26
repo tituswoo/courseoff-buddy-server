@@ -98,11 +98,12 @@ CourseBuddy.prototype.course = function (id, options) {
 				course.details = e;
 				// todo: if I put reject(e) here, it doesn't return anything.
 			}).done(function () {
-				if (courseInfo.averageMarks.gpa === '') {
-					reject(course);
-				} else {
-					resolve(course);
-				}
+				resolve(course);
+				// if (courseInfo.averageMarks.gpa === '') {
+				// 	// console.log('here is the course but i am rejecting', course)
+				// } else {
+				// 	resolve(course);
+				// }
 			});
 		});
 	});
