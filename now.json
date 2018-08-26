@@ -1,0 +1,8 @@
+{
+  "name": "courseoff-buddy",
+  "type": "npm",
+  "alias": "courseoffbuddy.tkw.im",
+  "engines": {
+    "node": "8.11.3"
+  }
+}
