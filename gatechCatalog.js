@@ -2,8 +2,6 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Promise = require('promise');
 
-var baseURL = 'http://catalog.gatech.edu/courses/php/parse.php';
-
 module.exports = {
 	/**
 	 * Get course description from gatech catalog.
@@ -17,33 +15,30 @@ module.exports = {
 	 * @param {string} 	course.year - the course year.
 	 * @return {[type]}          [description]
 	 */
-	getCourseDescription: function(course) {
+	getCourseDescription: function(course = {}) {
 		return new Promise(function (resolve, reject) {
-			var string = course.name;
+			var courseString = course.name;
 			var term = parseTermFromDate(course.semester, course.year);
 
-			var query = {
-				string: string,
-				term: term
-			};
+			if (courseString === undefined || courseString.length < 1) {
+				return reject('course not provided')
+			}
 
-			request.post({
-				url: baseURL,
-				form: query,
-				timeout: 3000
-			}, function(error, response, body) {
-				// @todo: apparently the gatech catalog goes down a lot. and it stops
-				// any course info from showing. Program in a contingency
-				// so that pertinent info will still be returned even if
-				// all other parts don't.
+			const discipline = courseString.split(' ')[0].toUpperCase()
+			const courseNumber = courseString.split(' ')[1]
+
+			request.get(`https://oscar.gatech.edu/pls/bprod/bwckctlg.p_disp_course_detail?cat_term_in=${term}&subj_code_in=${discipline}&crse_numb_in=${courseNumber}`, (error, response, body) => {
 				if (error) reject(error);
+				
 				try {
-					var course = extractCourses(body).first();
-					resolve(course);
+					const $ = cheerio.load(body)
+					const courseDescription = $('.ntdefault').first().html().split('<br>')[0].replace(/\r?\n|\r/g, '')
+					console.log(courseDescription)
+					resolve(courseDescription)
 				} catch (e) {
-					reject(e);
+					reject(e)
 				}
-			});
+			})
 		});		
 	}
 };
